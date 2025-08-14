@@ -1,6 +1,8 @@
 #!/bin/bash
 whois "$1" | awk -F': ' '
-/^(Registrant|Admin|Tech) (Organization|State\/Province|Country|Email)/ {
-  gsub(/ /, "$", $2)
-  print $1 " " $2 "," $2
+/^Registrant Organization:/ {
+  print "Registrant Organization," $2
+}
+/^Tech Email:/ {
+  print "Tech Email," $2
 }' > "$1.csv"
