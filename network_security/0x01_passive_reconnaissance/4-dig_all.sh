@@ -1,2 +1,2 @@
 #!/bin/bash
-dig "$1" ANY +noall +answer
+nslookup -type=mx $1
