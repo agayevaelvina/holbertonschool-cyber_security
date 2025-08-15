@@ -1,3 +1,2 @@
 #!/bin/bash
-#!/bin/bash
-whois "$1" | awk 'BEGIN{FS=":";OFS=","} /^(Admin|Registrant|Tech)/ {s=$1; sub(/[ \t].*/, "", s); k=$1; sub(/^[^:]+:[ \t]*/, "", $0); gsub(/ +/, " ", $0); gsub(/^ +| +$/, "", $0); sub(/^ +/, "", k); sub(/^ +| +$/, "", k); if(!h[s k]++){print s" "k,$0}' > "$1".csv
+whois $1 | awk '/^(Registrant|Admin|Tech)/ {gsub(/^[ \t]+|[ \t]+$/, "", $0); split($0,a,":"); gsub(/^ /,"",a[2]); print a[1]","a[2]}' > $1.csv
