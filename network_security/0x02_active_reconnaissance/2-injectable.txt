@@ -1,1 +1,1 @@
-/<http://active.hbtn/product/1>
+/<:wqproduct/1>
