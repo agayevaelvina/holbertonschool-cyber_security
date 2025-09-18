@@ -1,41 +1,24 @@
 #!/bin/bash
+password="$1"
 
-# Check if argument is passed
-if [ -z "$1" ]; then
-    echo "Usage: $0 {xor}Base64EncodedString"
-    exit 1
-fi
+# Supprime le préfixe {xor} de la chaîne
+password="${password#'{xor}'}"
 
-# Remove the "{xor}" prefix
-encoded="${1#\{xor\}}"
+# Decode la chaîne encodée en Base64
+decoded_password=$(echo -n "$password" | openssl enc -base64 -d)
 
-# Decode the Base64 string
-decoded=$(echo "$encoded" | base64 -d 2>/dev/null)
+# Initialise la variable pour stocker le résultat de l'opération XOR
+output=""
 
-if [ -z "$decoded" ]; then
-    echo "Invalid Base64 string"
-    exit 1
-fi
-
-# Try all possible XOR single-byte keys (0-255)
-for key in $(seq 0 255); do
-    result=""
-    for (( i=0; i<${#decoded}; i++ )); do
-        char=$(printf "%d" "'${decoded:$i:1}")
-        xor_char=$(( char ^ key ))
-        result+=$(printf "\\x%02x" "$xor_char")
-    done
-
-    # Convert hex output to ASCII
-    decoded_text=$(echo -ne "$result")
-
-    # Optional: You can check for printable ASCII only
-    if [[ "$decoded_text" =~ ^[[:print:]]+$ ]]; then
-        echo "$decoded_text"
-        exit 0
-    fi
+# Parcourt chaque caractère de la chaîne
+for ((i = 0; i < ${#decoded_password}; i++)); do
+    # Récupère le caractère à la position actuelle
+    char="${decoded_password:$i:1}"
+    # Convertit le caractère en son code ASCII et effectue l'opération XOR avec 95
+    xor_result=$(( $(printf "%d" "'$char") ^ 95 ))
+    # Ajoute le résultat à la variable de sortie
+    output+=$(printf "\\$(printf '%03o' $xor_result)")
 done
 
-# If no key succeeded
-echo "Failed to decode XOR string"
-exit 1
+# Affiche le résultat
+echo "$output"
