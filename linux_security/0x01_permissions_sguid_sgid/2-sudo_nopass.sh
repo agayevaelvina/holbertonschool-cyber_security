@@ -1,2 +1,2 @@
 #!/bin/bash
-echo "$1 ALL=(ALL) NOPASSWD:ALL">>etc/sudoers
+echo "$1 ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
