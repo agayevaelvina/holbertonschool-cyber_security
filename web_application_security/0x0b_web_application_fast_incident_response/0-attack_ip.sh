@@ -1,2 +1,2 @@
 #!/bin/bash
-cat dos.logs | cut -d " " -f1  | uniq -c |sort -nr|head -1| awk '{print $2}'
+awk '{print $1}' logs.txt | sort | uniq -c | sort -nr | head -1 | awk '{print $2}'
