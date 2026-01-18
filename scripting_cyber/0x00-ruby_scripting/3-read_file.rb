@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 require 'json'
 
 def read_json_file(file_path)
