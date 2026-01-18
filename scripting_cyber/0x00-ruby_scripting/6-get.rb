@@ -1,29 +1,11 @@
 #!/usr/bin/env ruby
 
-class CaesarCipher
-  def initialize(shift)
-    @shift = shift
-  end
+require 'net/http'
+require 'json'
+require 'uri'
 
-  def encrypt(message)
-    cipher(message, @shift)
-  end
-
-  def decrypt(message)
-    cipher(message, -@shift)
-  end
-
-  private
-
-  def cipher(message, shift)
-    message.chars.map do |char|
-      if char =~ /[A-Z]/
-        (((char.ord - 65 + shift) % 26) + 65).chr
-      elsif char =~ /[a-z]/
-        (((char.ord - 97 + shift) % 26) + 97).chr
-      else
-        char
-      end
-    end.join
-  end
+def get_request(url)
+  res = Net::HTTP.get_response(URI(url))
+  puts "Response status: #{res.code} #{res.message}"
+  puts "Response body:\n#{JSON.pretty_generate(JSON.parse(res.body))}"
 end
